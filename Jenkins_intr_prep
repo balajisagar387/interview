@@ -1,0 +1,68 @@
+# what is jenkin CI?
+CI involves automatically building , intergating and testing code.
+create jenkins
+configure build process maven
+configure testing using JUnit
+set up notification
+
+# explain jenkins pipeline?
+automation techanology end to end process of building ,testing,and deploying software
+
+# what can you do for creating backup and coping file in jenkins?
+ThinBackup Plugin: This plugin automates the backup process. 
+After installing it, you can configure backup settings, such as location, backup intervals, 
+and the retention policy for old backups.
+
+Manual Backup: To manually back up your Jenkins data, you should archive the following directories and files:
+$JENKINS_HOME directory
+which contains job configurations, build artifacts, and system settings.
+plugins directory 
+which contains all installed plugin files and their configurations.
+secrets directory
+which holds encrypted secrets like API tokens and credentials.
+config.xml, jenkins.model.JenkinsLocationConfiguration.xml and hudson.tasks.Mailer.xml which store Jenkins system settings.
+
+# what is process of jenkins transfer onto another server?
+
+create backups of old server
+install jenkins on new server
+transfer the backup to new server
+
+
+# what is an agent directive in jenkins ?
+
+agent directive specifies where and how a Pipeline or a specific stage within a Pipeline should be executed
+
+1) any
+indicate pipeline/stage can run on any agent
+pipeline {
+    agent any
+    // ...
+}
+
+2) none
+ pipeline/stage  can run on master node
+
+3) node
+ specify a label for the agent to use. The Pipeline or stage will run on any agent with that label.
+
+pipeline {
+    agent {
+        node {
+            label 'linux-node'
+        }
+    }
+
+4) docker
+directive allows you to execute the Pipeline or stage within a Docker container.
+
+pipeline {
+    agent {
+        docker {
+            image 'maven:latest'
+        }
+    }
+    // ...
+}
+
+
