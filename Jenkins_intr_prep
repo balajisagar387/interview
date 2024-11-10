@@ -66,3 +66,233 @@ pipeline {
 }
 
 
+Github integartion
+
+1)install github plaugin
+Manage Jenkins > Manage Plugins.
+
+2) configure github authentication
+manage jenkins -> configure system
+
+Configure authentication using either:
+Username and Password: For basic authentication.
+OAuth API Tokens: For more secure access.
+SSH Keys: For SSH-based authentication.
+
+goto github setting search "webhook"
+
+generate new tocken
+select repos
+
+
+2) Integrating Maven 
+Manage Jenkins > Manage Plugins
+search for "maven integration" plugin
+
+create new freestyle project
+In the Build Triggers section, you can configure triggers like:
+
+Poll SCM: 
+Periodically check for changes in your source code repository.
+
+build section
+Goals & Options: 
+Specify the Maven goals to execute, e.g., clean install.
+
+Root POM: 
+Point to the root POM file of your Maven project.
+
+Additional Build Arguments: 
+Add any additional Maven command-line arguments.
+
+Maven Installations: 
+Select the Maven installation to use. You can configure multiple Maven installations in Jenkins.
+
+Configure Post-Build Actions (Optional):
+
+Publish JUnit test result report: 
+If your project generates JUnit test reports, configure Jenkins to publish them.
+
+Archive the artifacts: 
+Specify the artifacts to archive, such as JAR files or WAR files.
+
+Email Notification: 
+Configure email notifications to be sent on build success, failure, or unstable builds.
+
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+    }
+}
+
+3) integrating Jfrog plaugin
+Search for the "JFrog Artifactory" and install it
+
+Configure JFrog Artifactory:
+In Manage Jenkins > Configure System, find the "JFrog Artifactory" section.
+
+Configure the following:
+
+Server URL: 
+The URL of your Artifactory server.
+
+Credentials: 
+Set up credentials to authenticate with Artifactory.
+
+Default Depot: 
+The default depot to use for artifact deployment.
+
+In the build step, add a "Deploy to Artifactory" step.
+
+Configure the following:
+
+Server ID: 
+The ID of the Artifactory server you configured.
+
+Target Path: 
+The path in Artifactory where you want to deploy the artifacts.
+
+Includes: 
+Specify the artifacts to deploy, e.g., target/*.jar.
+
+Excludes: 
+Specify any artifacts to exclude.
+
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+        stage('Deploy to Artifactory') {
+            steps {
+                withArtifactory {
+                    publishArtifacts(
+                        resolver: 'my-resolver',
+                        artifacts: 'target/*.jar',
+                        deployPath: 'libs-release-local'
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+4) docker integration
+Search for the "Docker Pipeline" "kubernetes plugin" in case of kubernetes
+plugin and install it
+. Configure Docker:
+
+Docker Installation: 
+Ensure Docker is installed on your Jenkins server or agents.
+
+Docker Credentials: 
+Configure Docker credentials in Jenkins to access private registries.
+
+ Configure Kubernetes:
+
+Kubernetes Cluster: 
+Set up a Kubernetes cluster on EKS or any other provider.
+
+Kubeconfig: 
+Configure the kubeconfig file for your cluster in Jenkins. This can be done by adding the kubeconfig to the Jenkins server or by using Kubernetes credentials.
+
+docker example
+
+pipeline {
+    agent {
+        docker {
+            image 'maven:latest'
+        }
+    }
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t my-image .'
+            }
+        }
+        stage('Docker Push') {
+            steps {
+                sh 'docker push my-image'
+            }
+        }
+    }
+}
+
+Kubernetes
+goto manage jenkins -> configure system
+
+
+pipeline {
+    agent {
+        kubernetes {
+            defaultContainer 'kubectl'
+            yamlFile 'kubernetes/deployment.yaml'
+        }
+    }
+    stages {
+        stage('Deploy to EKS') {
+            steps {
+                sh 'kubectl apply -f kubernetes/deployment.yaml'
+            }
+        }
+    }
+}
+
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+                sh 'docker build -t my-image .'
+                sh 'docker push my-image:latest'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'kubectl apply -f deployment.yaml'
+            }
+        }
+    }
+}
+
+5) integrating Sonarqube
+install plugin "SonarQube Scanner"
+
+Configure the following:
+
+Name: 
+A unique name for the server.
+
+Server URL: 
+The URL of your SonarQube server.
+
+Server authentication: 
+Choose the authentication method (e.g., token-based).
+
+In the build step, add a Execute SonarQube Scanner step.
+Configure the following:
+Server: 
+Select the SonarQube server you configured.
+
+Analysis properties: 
+Add any additional SonarQube analysis properties, such as specific analysis tasks or quality gates.
+
+
+
+
+
