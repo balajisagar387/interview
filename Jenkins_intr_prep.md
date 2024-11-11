@@ -5,6 +5,26 @@ configure build process maven
 configure testing using JUnit
 set up notification
 
+# Trobleshooting
+jenkins error
+128 -> no cred configured 
+401, 403 -> wrong cred
+137 -> memory  not enough
+ xms -> initial memory for the pipeline 
+ xmx -> max memory
+
+Sonarqube
+internal server error
+restart the server
+
+
+if you getting error while pushing large size file in git
+you need to update post buffer size
+
+
+
+
+
 # explain jenkins pipeline?
 automation techanology end to end process of building ,testing,and deploying software
 
